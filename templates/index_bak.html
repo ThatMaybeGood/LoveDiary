@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的时光 - 情侣共享日记</title>
+    <style>
+        :root {
+            --primary-color: #ff6b8b;
+            --secondary-color: #6a5af9;
+            --accent-color: #4ecdc4;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f7fe;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav ul li a:hover {
+            opacity: 0.8;
+        }
+
+        nav ul li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-actions button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+
+        .user-actions button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: flex;
+            margin-top: 2rem;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            flex: 0 0 250px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .module-list {
+            list-style: none;
+        }
+
+        .module-list li {
+            margin-bottom: 1rem;
+        }
+
+        .module-list a {
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .module-list a:hover, .module-list a.active {
+            background-color: rgba(255, 107, 139, 0.1);
+            color: var(--primary-color);
+        }
+
+        .module-list i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .content-area {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            min-height: 600px;
+        }
+
+        .module-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .module-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .module-title h2 {
+            color: var(--primary-color);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .card-content {
+            color: #666;
+        }
+
+        .diary-entry {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .diary-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .diary-date {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .diary-author {
+            color: #666;
+        }
+
+        .diary-content {
+            line-height: 1.8;
+        }
+
+        .add-entry {
+            background: white;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .add-entry:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #ff4d7a;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            box-shadow: var(--shadow);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .reminder-list, .wishlist, .message-board {
+            margin-top: 1.5rem;
+        }
+
+        .reminder-item, .wish-item, .message-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reminder-info, .wish-info, .message-info {
+            flex: 1;
+        }
+
+        .reminder-title, .wish-title, .message-author {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .reminder-date, .wish-description, .message-content {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .days-left {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        footer {
+            background: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: 1;
+                margin-bottom: 2rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+
+            .user-actions {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heart"></i>
+                    <span>我们的时光</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active" data-module="dashboard">首页</a></li>
+                        <li><a href="#" data-module="diary">共享日记</a></li>
+                        <li><a href="#" data-module="reminders">纪念日</a></li>
+                        <li><a href="#" data-module="gallery">相册回忆</a></li>
+                        <li><a href="#" data-module="wishlist">礼物期望</a></li>
+                        <li><a href="#" data-module="bucketlist">愿望清单</a></li>
+                        <li><a href="#" data-module="messages">留言板</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button id="login-btn">登录</button>
+                    <button id="register-btn">注册</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <aside class="sidebar">
+                <ul class="module-list">
+                    <li><a href="#" class="active" data-module="dashboard"><i class="fas fa-home"></i> 首页概览</a></li>
+                    <li><a href="#" data-module="diary"><i class="fas fa-book"></i> 共享日记</a></li>
+                    <li><a href="#" data-module="reminders"><i class="fas fa-calendar-alt"></i> 纪念日提醒</a></li>
+                    <li><a href="#" data-module="gallery"><i class="fas fa-images"></i> 相册回忆</a></li>
+                    <li><a href="#" data-module="wishlist"><i class="fas fa-gift"></i> 礼物期望</a></li>
+                    <li><a href="#" data-module="bucketlist"><i class="fas fa-list-ul"></i> 愿望清单</a></li>
+                    <li><a href="#" data-module="messages"><i class="fas fa-comments"></i> 共享留言板</a></li>
+                </ul>
+            </aside>
+
+            <main class="content-area">
+                <!-- 首页概览 -->
+                <div id="dashboard" class="module-content">
+                    <div class="module-title">
+                        <i class="fas fa-home"></i>
+                        <h2>首页概览</h2>
+                    </div>
+                    <div class="dashboard">
+                        <div class="dashboard-card" data-module="diary">
+                            <div class="card-header">
+                                <i class="fas fa-book"></i>
+                                <h3>共享日记</h3>
+                            </div>
+                            <div class="card-content">
+                                <p>记录我们的点点滴滴，共同书写爱情故事。</p>
+                                <p class="stats">已有 <strong>24</strong> 篇日记</p>
+                            </div>
+                        </div>
+                        <div class="dashboard-card" data-module="reminders">
+                            <div class="card-header">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h3>纪念日</h3>
+                            </div>
+                            <div class="card-content">
+                                <p>重要的日子不容错过，提前准备惊喜。</p>
+                                <p class="stats"><strong>3</strong> 个即将到来的纪念日</p>
+                            </div>
+                        </div>
+                        <div class="dashboard-card" data-module="gallery">
+                            <div class="card-header">
+                                <i class="fas fa-images"></i>
+                                <h3>相册回忆</h3>
+                            </div>
+                            <div class="card-content">
+                                <p>珍藏美好瞬间，随时重温甜蜜时刻。</p>
+                                <p class="stats">已有 <strong>156</strong> 张照片</p>
+                            </div>
+                        </div>
+                        <div class="dashboard-card" data-module="wishlist">
+                            <div class="card-header">
+                                <i class="fas fa-gift"></i>
+                                <h3>礼物期望</h3>
+                            </div>
+                            <div class="card-content">
+                                <p>悄悄记下心仪的礼物，给对方惊喜灵感。</p>
+                                <p class="stats"><strong>12</strong> 个礼物想法</p>
+                            </div>
+                        </div>
+                        <div class="dashboard-card" data-module="bucketlist">
+                            <div class="card-header">
+                                <i class="fas fa-list-ul"></i>
+                                <h3>愿望清单</h3>
+                            </div>
+                            <div class="card-content">
+                                <p>一起规划未来，实现共同的梦想。</p>
+                                <p class="stats"><strong>8</strong> 个待完成事项</p>
+                            </div>
+                        </div>
+                        <div class="dashboard-card" data-module="messages">
+                            <div class="card-header">
+                                <i class="fas fa-comments"></i>
+                                <h3>留言板</h3>
+                            </div>
+                            <div class="card-content">
+                                <p>随时随地分享心情，传递爱与关怀。</p>
+                                <p class="stats"><strong>47</strong> 条留言</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 共享日记 -->
+                <div id="diary" class="module-content hidden">
+                    <div class="module-title">
+                        <i class="fas fa-book"></i>
+                        <h2>共享日记</h2>
+                    </div>
+                    <div class="diary-entry">
+                        <div class="diary-header">
+                            <span class="diary-date">2023年10月15日</span>
+                            <span class="diary-author">小美</span>
+                        </div>
+                        <div class="diary-content">
+                            <p>今天是我们在一起的第300天！他偷偷准备了惊喜晚餐，还送了我一直想要的那条项链。虽然工作很忙，但他总是能记得这些重要的日子，让我感到特别幸福。</p>
+                            <p>晚上我们一起看了我们第一次约会时看的那部电影，回忆满满。希望未来的每一天都能这样甜蜜！</p>
+                        </div>
+                    </div>
+                    <div class="diary-entry">
+                        <div class="diary-header">
+                            <span class="diary-date">2023年10月10日</span>
+                            <span class="diary-author">小明</span>
+                        </div>
+                        <div class="diary-content">
+                            <p>今天和她一起去爬山了，虽然很累，但山顶的风景真的太美了。她累得走不动的时候，我背了她一段路，她在我耳边轻轻说"有你真好"，那一刻感觉所有的疲惫都值得了。</p>
+                            <p>下山后我们去了那家她一直想尝试的餐厅，食物一般，但和她在一起，什么都变得美味了。</p>
+                        </div>
+                    </div>
+                    <div class="add-entry">
+                        <i class="fas fa-plus-circle"></i> 添加新日记
+                    </div>
+                </div>
+
+                <!-- 纪念日提醒 -->
+                <div id="reminders" class="module-content hidden">
+                    <div class="module-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h2>纪念日提醒</h2>
+                    </div>
+                    <div class="reminder-list">
+                        <div class="reminder-item">
+                            <div class="reminder-info">
+                                <div class="reminder-title">相识纪念日</div>
+                                <div class="reminder-date">2023年11月5日</div>
+                            </div>
+                            <div class="days-left">15天后</div>
+                        </div>
+                        <div class="reminder-item">
+                            <div class="reminder-info">
+                                <div class="reminder-title">她的生日</div>
+                                <div class="reminder-date">2023年12月20日</div>
+                            </div>
+                            <div class="days-left">60天后</div>
+                        </div>
+                        <div class="reminder-item">
+                            <div class="reminder-info">
+                                <div class="reminder-title">第一次旅行</div>
+                                <div class="reminder-date">2024年1月15日</div>
+                            </div>
+                            <div class="days-left">86天后</div>
+                        </div>
+                    </div>
+                    <button class="btn">添加新纪念日</button>
+                </div>
+
+                <!-- 相册回忆 -->
+                <div id="gallery" class="module-content hidden">
+                    <div class="module-title">
+                        <i class="fas fa-images"></i>
+                        <h2>相册回忆</h2>
+                    </div>
+                    <div class="gallery">
+                        <div class="photo-item">
+                            <img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="我们的旅行">
+                            <div class="photo-caption">第一次旅行 - 2023年5月</div>
+                        </div>
+                        <div class="photo-item">
+                            <img src="https://images.unsplash.com/photo-1533158307587-828f0a76ef46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="生日惊喜">
+                            <div class="photo-caption">生日惊喜 - 2023年3月</div>
+                        </div>
+                        <div class="photo-item">
+                            <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="日常晚餐">
+                            <div class="photo-caption">周末晚餐 - 2023年7月</div>
+                        </div>
+                        <div class="photo-item">
+                            <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="海边日落">
+                            <div class="photo-caption">海边日落 - 2023年8月</div>
+                        </div>
+                    </div>
+                    <button class="btn">上传新照片</button>
+                </div>
+
+                <!-- 礼物期望 -->
+                <div id="wishlist" class="module-content hidden">
+                    <div class="module-title">
+                        <i class="fas fa-gift"></i>
+                        <h2>礼物期望</h2>
+                    </div>
+                    <div class="wishlist">
+                        <div class="wish-item">
+                            <div class="wish-info">
+                                <div class="wish-title">无线耳机</div>
+                                <div class="wish-description">运动时使用，希望是降噪的</div>
+                            </div>
+                            <div class="wish-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                        <div class="wish-item">
+                            <div class="wish-info">
+                                <div class="wish-title">情侣手链</div>
+                                <div class="wish-description">简约风格，可以刻字的那种</div>
+                            </div>
+                            <div class="wish-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                        <div class="wish-item">
+                            <div class="wish-info">
+                                <div class="wish-title">烹饪课程</div>
+                                <div class="wish-description">想一起学习做西餐</div>
+                            </div>
+                            <div class="wish-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn">添加新礼物</button>
+                </div>
+
+                <!-- 愿望清单 -->
+                <div id="bucketlist" class="module-content hidden">
+                    <div class="module-title">
+                        <i class="fas fa-list-ul"></i>
+                        <h2>愿望清单</h2>
+                    </div>
+                    <div class="wishlist">
+                        <div class="wish-item">
+                            <div class="wish-info">
+                                <div class="wish-title">一起去日本看樱花</div>
+                                <div class="wish-description">计划在明年春天实现</div>
+                            </div>
+                            <div class="wish-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                        <div class="wish-item">
+                            <div class="wish-info">
+                                <div class="wish-title">学习双人舞蹈</div>
+                                <div class="wish-description">探戈或者华尔兹</div>
+                            </div>
+                            <div class="wish-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                        <div class="wish-item">
+                            <div class="wish-info">
+                                <div class="wish-title">养一只宠物</div>
+                                <div class="wish-description">考虑养猫或者小狗</div>
+                            </div>
+                            <div class="wish-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn">添加新愿望</button>
+                </div>
+
+                <!-- 共享留言板 -->
+                <div id="messages" class="module-content hidden">
+                    <div class="module-title">
+                        <i class="fas fa-comments"></i>
+                        <h2>共享留言板</h2>
+                    </div>
+                    <div class="message-board">
+                        <div class="message-item">
+                            <div class="message-info">
+                                <div class="message-author">小明 - 今天 09:15</div>
+                                <div class="message-content">早安！今天天气真好，晚上一起去新开的那家餐厅试试吗？</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div class="message-info">
+                                <div class="message-author">小美 - 今天 09:20</div>
+                                <div class="message-content">好呀！我下班比较早，可以先去占位置。记得多穿点，晚上可能会凉。</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div class="message-info">
+                                <div class="message-author">小明 - 昨天 22:30</div>
+                                <div class="message-content">晚安，明天见！做个好梦～</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" placeholder="写下你想说的话..."></textarea>
+                    </div>
+                    <button class="btn">发送留言</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>我们的时光 - 记录爱情中的每一个珍贵瞬间</p>
+            <p>© 2023 我们的时光 - All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        // 模块切换功能
+        document.querySelectorAll('nav a, .module-list a, .dashboard-card').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const module = this.getAttribute('data-module');
+
+                // 隐藏所有模块
+                document.querySelectorAll('.module-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+
+                // 显示选中的模块
+                document.getElementById(module).classList.remove('hidden');
+
+                // 更新导航激活状态
+                document.querySelectorAll('nav a, .module-list a').forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                // 激活当前链接
+                if (this.classList.contains('dashboard-card')) {
+                    document.querySelector(`nav a[data-module="${module}"]`).classList.add('active');
+                    document.querySelector(`.module-list a[data-module="${module}"]`).classList.add('active');
+                } else {
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // 模拟登录/注册功能
+        document.getElementById('login-btn').addEventListener('click', function() {
+            alert('登录功能将在完整版中实现');
+        });
+
+        document.getElementById('register-btn').addEventListener('click', function() {
+            alert('注册功能将在完整版中实现');
+        });
+
+        // 添加日记功能
+        document.querySelector('.add-entry').addEventListener('click', function() {
+            alert('添加新日记功能将在完整版中实现');
+        });
+
+        // 初始化显示首页
+        document.getElementById('dashboard').classList.remove('hidden');
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- 日记列表 -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">我们的日记</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newDiaryModal">
+                    <i class="fas fa-plus"></i> 写日记
+                </button>
+            </div>
+            <div class="card-body">
+                {% if diaries %}
+                    {% for diary in diaries %}
+                    <div class="diary-item border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6>{{ diary.title }}</h6>
+                            <small class="text-muted">{{ diary.created_at }}</small>
+                        </div>
+                        <p class="text-muted mb-1">{{ diary.content[:100] }}{% if diary.content|length > 100 %}...{% endif %}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">作者: {{ diary.author.username }}</small>
+                            {% if diary.mood %}
+                            <span class="badge bg-info">{{ diary.mood }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">还没有日记，快来写第一篇吧！</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 侧边栏 -->
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="mb-0">快速功能</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newDiaryModal">
+                        <i class="fas fa-book"></i> 写日记
+                    </button>
+                    <button class="btn btn-outline-success">
+                        <i class="fas fa-camera"></i> 上传照片
+                    </button>
+                    <button class="btn btn-outline-warning">
+                        <i class="fas fa-gift"></i> 礼物清单
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新建日记模态框 -->
+<div class="modal fade" id="newDiaryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">写新日记</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="diaryForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">标题</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">内容</label>
+                        <textarea class="form-control" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">心情</label>
+                            <select class="form-select" name="mood">
+                                <option value="">选择心情</option>
+                                <option value="开心">😊 开心</option>
+                                <option value="甜蜜">🥰 甜蜜</option>
+                                <option value="想念">💭 想念</option>
+                                <option value="感动">🥲 感动</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">共享设置</label>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_shared" id="isShared" checked>
+                                <label class="form-check-label" for="isShared">共享给伴侣</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存日记</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#diaryForm').on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '{{ url_for("new_diary") }}',
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#newDiaryModal').modal('hide');
+                    location.reload();
+                }
+            },
+            error: function() {
+                alert('保存失败，请重试');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
