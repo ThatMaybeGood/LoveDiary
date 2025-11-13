@@ -45,14 +45,15 @@ class MockData:
         {
             'id': 1,
             'title': '相识纪念日',
-            'date': (datetime.now() + timedelta(days=15)).strftime('%Y-%m-%d'),
-            'days_left': 15,
+            # 'date': (datetime.now() + timedelta(days=15)).strftime('%Y-%m-%d'),
+            'date': '2024-03-15',
+            'days_left': 30,
             'type': 'anniversary'
         },
         {
             'id': 2,
             'title': '她的生日',
-            'date': (datetime.now() + timedelta(days=60)).strftime('%Y-%m-%d'),
+            'date': '2024-08-06',
             'days_left': 60,
             'type': 'birthday'
         }
